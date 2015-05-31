@@ -1,8 +1,30 @@
 <?php
+session_start();
+error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 include 'storedInfo.php';
 include 'db.php';
+
+//Check if logged in
+if (!isset($_SESSION['loggedIn'])){
+	$filePath = explode('/', $_SERVER['PHP_SELF'], -1);
+	$filePath = implode('/', $filePath);
+	$redirect = "http://" . $_SERVER['HTTP_HOST'] . $filePath;
+	header("Location: {$redirect}/login.php" , true);
+}
+
+//Logout user
+if(isset($_GET['logout'])){
+	$_SESSION = array();
+	session_destroy();
+	$filePath = explode('/', $_SERVER['PHP_SELF'], -1);
+	$filePath = implode('/', $filePath);
+	$redirect = "http://" . $_SERVER['HTTP_HOST'] . $filePath;
+	header("Location: {$redirect}/login.php" , true);
+	die();
+}
 ?>
+
 <!doctype html>
 <html>
 	<head>
@@ -45,7 +67,8 @@ include 'db.php';
 		<section>
 			<div class="container">
 				<div class="col-md-2">
-					<p>Username</p>
+					<p>Hello, <?php echo "{$_SESSION['loggedIn']}"; ?>!</p>
+					<p><a href="index.php?logout=true">Logout</a></p>
 				</div>
 				<div class="col-md-10">
 					<p>Content</p>
