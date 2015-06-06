@@ -17,15 +17,12 @@ if(isset($is_ajax) && $is_ajax) {
 	$checkUsername->execute();
 	$checkUsername->store_result();
 	$rowsUsername = $checkUsername->num_rows;
+	$checkUsername->close();
 
 	if($rowsUsername > 0){
 		//Matching username found
 		echo "duplicate";
-	}
-	$checkUsername->close();
-
-	//Check if passwords match
-	if($password1 == $password2) {
+	} else { //Enter new user into users table
 		//md5 hash
 		$password1 = md5($password1);
 

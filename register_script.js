@@ -1,5 +1,6 @@
 $(document).ready(function () {
 	$("#submit").click(function(){
+		//Verify entered passwords match
 		if($("#password1").val() != $("#password2").val()) {
 			$("#response").html("Passwords do not match.");
 		} else {
@@ -10,19 +11,25 @@ $(document).ready(function () {
 				is_ajax: 1
 			};
 
-			console.log(formData);
-
+			//post to validateReg.php
 			$.ajax({
 				type: "POST",
 				url: "validateReg.php",
 				data: formData,
 				success: function(response) {
+					console.log(response);
 					if(response == "registered") {
-						
-						$("#success").html("Registration complete. Click <a href=\"login.php\">here</a> to login.");
-					} else {
+						//Registration successful
+						$("#success").html("Registration successful. Redirecting to login page.<p><a href=\"login.php\">Click here to go back.</a></p>");
+						$("#response").html("");
+						//Redirect to login page
+						setTimeout(function() {
+							window.location.href = "login.php";
+						}, 2000);
+					} else if(response == "duplicate") {
 						//Username already exists
 						$("#response").html("A user with that name already exists.");
+						$("#success").html("");
 					}
 				}
 			});
