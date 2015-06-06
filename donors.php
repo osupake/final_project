@@ -8,9 +8,8 @@ require_once('session.php');
 
 $username = $_SESSION['loggedIn'];
 
-$locQuery = "SELECT * FROM Location ORDER BY venue ASC";
-$locResult = $mysqli->query($locQuery);
-//$row = $locResult->fetch_assoc();
+$donorQuery = "SELECT * FROM Donors ORDER BY lname ASC";
+$donorResult = $mysqli->query($donorQuery);
 
 ?>
 
@@ -68,19 +67,19 @@ $locResult = $mysqli->query($locQuery);
 					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
 				</div>
 				<div class="col-md-9">
-					<h2 class="text-center">Locations</h2>
+					<h2 class="text-center">Donors</h2>
 					<table class="table table-bordered">
 						<thead>
-							<th>Venue</th>
-							<th>Address</th>
+							<th>Name</th>
+							<th>Phone</th>
 							<th>City</th>
 							<th>State</th>
 						</thead>
 						<tbody>
-							<?php while($row = $locResult->fetch_assoc()) {
+							<?php while($row = $donorResult->fetch_assoc()) {
 								echo "<tr>";
-								echo "<td><a href=\"viewLocation.php?id=" . $row['location_id'] . "\">" . $row['venue'] . "</a></td>";
-								echo "<td>" . $row['address'] . "</td>";
+								echo "<td><a href=\"viewDonor.php?id=" . $row['donor_id'] . "\">" . $row['fname'] . " " . $row['lname'] . "</a></td>";
+								echo "<td>" . $row['phone'] . "</td>";
 								echo "<td>" . $row['city'] . "</td>";
 								echo "<td>" . $row['state'] . "</td>";
 								echo "</tr>";

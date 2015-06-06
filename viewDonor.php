@@ -8,9 +8,16 @@ require_once('session.php');
 
 $username = $_SESSION['loggedIn'];
 
-$locQuery = "SELECT * FROM Location ORDER BY venue ASC";
-$locResult = $mysqli->query($locQuery);
-//$row = $locResult->fetch_assoc();
+$donor_id = $_GET['id'];
+
+//Prepared statement to get details for selected location
+if (!($viewDonor = $mysqli->prepare("SELECT * FROM Donors WHERE donor_id=?"))) {
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
+$viewDonor->bind_param("i", $donor_id);
+$viewDonor->execute();
+$result = $viewDonor->get_result();
+$viewDonor->close();
 
 ?>
 
@@ -68,22 +75,13 @@ $locResult = $mysqli->query($locQuery);
 					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
 				</div>
 				<div class="col-md-9">
-					<h2 class="text-center">Locations</h2>
 					<table class="table table-bordered">
-						<thead>
-							<th>Venue</th>
-							<th>Address</th>
-							<th>City</th>
-							<th>State</th>
-						</thead>
 						<tbody>
-							<?php while($row = $locResult->fetch_assoc()) {
-								echo "<tr>";
-								echo "<td><a href=\"viewLocation.php?id=" . $row['location_id'] . "\">" . $row['venue'] . "</a></td>";
-								echo "<td>" . $row['address'] . "</td>";
-								echo "<td>" . $row['city'] . "</td>";
-								echo "<td>" . $row['state'] . "</td>";
-								echo "</tr>";
+							<?php while($row = $result->fetch_assoc()) {
+								echo "<tr><td>Name</td><td>" . $row['fname'] . " " . $row['lname'] . "</td></tr>";
+								echo "<tr><td>Phone</td><td>" . $row['phone'] . "</td></tr>";
+								echo "<tr><td>City</td><td>" . $row['city'] . "</td></tr>";
+								echo "<tr><td>State</td><td>" . $row['state'] . "</td></tr>";
 							}
 							?>
 						</tbody>

@@ -8,6 +8,17 @@ require_once('session.php');
 
 $username = $_SESSION['loggedIn'];
 
+//Prepared statement to get details for selected event
+if (!($viewEvent = $mysqli->prepare("SELECT Events.event_id, Events.name, Events.cost, Events.event_date, Location.venue, Location.location_id, Managers.username FROM Events
+									INNER JOIN Managers ON Events.manager = Managers.manager_id
+									INNER JOIN Location ON Events.location = Location.location_id WHERE Managers.username=? ORDER BY Events.name ASC"))){
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
+$viewEvent->bind_param("s", $username);
+$viewEvent->execute();
+$result = $viewEvent->get_result();
+$viewEvent->close();
+
 ?>
 
 <!doctype html>
@@ -34,16 +45,16 @@ $username = $_SESSION['loggedIn'];
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Add <span class="caret"></span></a>
 								<ul class="dropdown-menu" role="menu">
-								    <li><a href="addEvent.php">Add Event</a></li>
-									<li><a href="addDonor.php">Add Donor</a></li>
-									<li><a href="addVolunteer.php">Add Volunteer</a></li>
-									<li><a href="add.php#addLocation">Add Location</a></li>
+								    <li><a href="add.php#addEvent">Add Event</a></li>
+								    <li><a href="add.php#addLocation">Add Location</a></li>
+									<li><a href="add.php#addDonor">Add Donor</a></li>
+									<li><a href="add.php#addVolunteer">Add Volunteer</a></li>
 						       	</ul>
 							</li>
 							<li class="dropdown">
 					       	<a href="#" class="dropdown-toggle" data-toggle="dropdown">View <span class="caret"></span></a>
 						       	<ul class="dropdown-menu" role="menu">
-						       		<li><a href="myevents.php">Your Events</a></li>
+						       		<li><a href="index.php">Your Events</a></li>
 						       		<li class="divider"></li>
 								    <li><a href="events.php">View All Events</a></li>
 									<li><a href="donors.php">View Donors</a></li>
@@ -64,7 +75,26 @@ $username = $_SESSION['loggedIn'];
 					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
 				</div>
 				<div class="col-md-9">
-					<p>Content</p>
+					<h2 class="text-center">My Events</h2>
+					<table class="table table-bordered">
+						<thead>
+							<th>Name</th>
+							<th>Location</th>
+							<th>Cost</th>
+							<th>Date</th>
+						</thead>
+						<tbody>
+							<?php while($row = $result->fetch_assoc()) {
+								echo "<tr>";
+								echo "<td><a href=\"viewEvent.php?id=" . $row['event_id'] . "\">" . $row['name'] . "</a></td>";
+								echo "<td><a href=\"viewLocation.php?id=" . $row['location_id'] . "\">" . $row['venue'] . "</td>";
+								echo "<td>" . $row['cost'] . "</td>";
+								echo "<td>" . $row['event_date'] . "</td>";
+								echo "</tr>";
+							}
+							?>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</section>

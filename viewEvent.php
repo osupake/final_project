@@ -8,9 +8,18 @@ require_once('session.php');
 
 $username = $_SESSION['loggedIn'];
 
-$locQuery = "SELECT * FROM Location ORDER BY venue ASC";
-$locResult = $mysqli->query($locQuery);
-//$row = $locResult->fetch_assoc();
+$event_id = $_GET['id'];
+
+//Prepared statement to get details for selected event
+if (!($viewEvent = $mysqli->prepare("SELECT Events.event_id, Events.name, Events.cost, Events.event_date, Location.venue, Location.location_id, Managers.fname, Managers.lname FROM Events
+									INNER JOIN Managers ON Events.manager = Managers.manager_id
+									INNER JOIN Location ON Events.location = Location.location_id WHERE Events.event_id=?"))){
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
+$viewEvent->bind_param("i", $event_id);
+$viewEvent->execute();
+$result = $viewEvent->get_result();
+$viewEvent->close();
 
 ?>
 
@@ -68,22 +77,14 @@ $locResult = $mysqli->query($locQuery);
 					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
 				</div>
 				<div class="col-md-9">
-					<h2 class="text-center">Locations</h2>
 					<table class="table table-bordered">
-						<thead>
-							<th>Venue</th>
-							<th>Address</th>
-							<th>City</th>
-							<th>State</th>
-						</thead>
 						<tbody>
-							<?php while($row = $locResult->fetch_assoc()) {
-								echo "<tr>";
-								echo "<td><a href=\"viewLocation.php?id=" . $row['location_id'] . "\">" . $row['venue'] . "</a></td>";
-								echo "<td>" . $row['address'] . "</td>";
-								echo "<td>" . $row['city'] . "</td>";
-								echo "<td>" . $row['state'] . "</td>";
-								echo "</tr>";
+							<?php while($row = $result->fetch_assoc()) {
+								echo "<tr><td>Event</td><td>" . $row['name'] . "</td></tr>";
+								echo "<tr><td>Cost</td><td>" . $row['cost'] . "</td></tr>";
+								echo "<tr><td>Date</td><td>" . $row['event_date'] . "</td></tr>";
+								echo "<tr><td>Venue</td><td>" . $row['venue'] . "</td></tr>";
+								echo "<tr><td>Manager</td><td>" . $row['fname'] . " " . $row['lname'] . "</td></tr>";
 							}
 							?>
 						</tbody>

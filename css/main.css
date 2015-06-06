@@ -1,7 +1,16 @@
-#response, #responseLoc {
+#response, #responseLoc, #responseEvent, #responseVol, #responseDonor {
 	color: red;
 }
 
-#success, #successLoc {
+#success, #successLoc, #successEvent, #successVol, #successDonor {
 	color: green;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid black;
+    margin: 50px 0px;
+    padding: 0;
 }

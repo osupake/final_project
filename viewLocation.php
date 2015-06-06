@@ -21,16 +21,30 @@ $viewLoc->close();
 
 //Delete location
 if(isset($_GET['delete'])){
-	if (!($deleteLoc = $mysqli->prepare("DELETE FROM Location WHERE location_id=? LIMIT 1"))) {
+	if (!($checkLoc = $mysqli->prepare("SELECT * FROM Events WHERE location=?"))) {
 	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
 	}
-	$deleteLoc->bind_param("i", $location_id);
-	$deleteLoc->execute();
-	$filePath = explode('/', $_SERVER['PHP_SELF'], -1);
-	$filePath = implode('/', $filePath);
-	$redirect = "http://" . $_SERVER['HTTP_HOST'] . $filePath;
-	header("Location: {$redirect}/locations.php" , true);
-	die();
+	$checkLoc->bind_param("i", $location_id);
+	$checkLoc->execute();
+	$checkLoc->store_result();
+	$rowsLoc = $checkLoc->num_rows;
+	$checkLoc->close();
+
+	if($rowsLoc > 0){
+		//Matching event entry found
+		echo "Cannot delete location because an event with that location exists.";
+	} else {
+		if (!($deleteLoc = $mysqli->prepare("DELETE FROM Location WHERE location_id=? LIMIT 1"))) {
+		     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+		}
+		$deleteLoc->bind_param("i", $location_id);
+		$deleteLoc->execute();
+		$filePath = explode('/', $_SERVER['PHP_SELF'], -1);
+		$filePath = implode('/', $filePath);
+		$redirect = "http://" . $_SERVER['HTTP_HOST'] . $filePath;
+		header("Location: {$redirect}/locations.php" , true);
+		die();
+	}
 }
 
 ?>
@@ -59,16 +73,16 @@ if(isset($_GET['delete'])){
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Add <span class="caret"></span></a>
 								<ul class="dropdown-menu" role="menu">
-								    <li><a href="addEvent.php">Add Event</a></li>
-									<li><a href="addDonor.php">Add Donor</a></li>
-									<li><a href="addVolunteer.php">Add Volunteer</a></li>
-									<li><a href="addLocation.php">Add Location</a></li>
+								    <li><a href="add.php#addEvent">Add Event</a></li>
+								    <li><a href="add.php#addLocation">Add Location</a></li>
+									<li><a href="add.php#addDonor">Add Donor</a></li>
+									<li><a href="add.php#addVolunteer">Add Volunteer</a></li>
 						       	</ul>
 							</li>
 							<li class="dropdown">
 					       	<a href="#" class="dropdown-toggle" data-toggle="dropdown">View <span class="caret"></span></a>
 						       	<ul class="dropdown-menu" role="menu">
-						       		<li><a href="myevents.php">Your Events</a></li>
+						       		<li><a href="index.php">Your Events</a></li>
 						       		<li class="divider"></li>
 								    <li><a href="events.php">View All Events</a></li>
 									<li><a href="donors.php">View Donors</a></li>
@@ -101,6 +115,7 @@ if(isset($_GET['delete'])){
 						</tbody>
 					</table>
 					<a href="<?php echo "viewLocation.php?id=$location_id&delete=true" ?>"><button class="btn btn-danger">Delete Entry</button></a>
+					<div id="delete"></div>
 				</div>
 			</div>
 		</section>

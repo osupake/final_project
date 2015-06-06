@@ -8,6 +8,12 @@ require_once('session.php');
 
 $username = $_SESSION['loggedIn'];
 
+$eventLocation = "SELECT venue, location_id FROM Location ORDER BY venue ASC";
+$eventLocResult = $mysqli->query($eventLocation);
+
+$eventManager = "SELECT fname, lname, manager_id FROM Managers ORDER BY lname ASC";
+$eventManResult = $mysqli->query($eventManager);
+$volManResult = $mysqli->query($eventManager);
 ?>
 
 <!doctype html>
@@ -34,16 +40,16 @@ $username = $_SESSION['loggedIn'];
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Add <span class="caret"></span></a>
 								<ul class="dropdown-menu" role="menu">
-								    <li><a href="addEvent.php">Add Event</a></li>
-									<li><a href="addDonor.php">Add Donor</a></li>
-									<li><a href="addVolunteer.php">Add Volunteer</a></li>
-									<li><a href="addLocation.php">Add Location</a></li>
+								    <li><a href="add.php#addEvent">Add Event</a></li>
+								    <li><a href="add.php#addLocation">Add Location</a></li>
+									<li><a href="add.php#addDonor">Add Donor</a></li>
+									<li><a href="add.php#addVolunteer">Add Volunteer</a></li>
 						       	</ul>
 							</li>
 							<li class="dropdown">
 					       	<a href="#" class="dropdown-toggle" data-toggle="dropdown">View <span class="caret"></span></a>
 						       	<ul class="dropdown-menu" role="menu">
-						       		<li><a href="myevents.php">Your Events</a></li>
+						       		<li><a href="index.php">Your Events</a></li>
 						       		<li class="divider"></li>
 								    <li><a href="events.php">View All Events</a></li>
 									<li><a href="donors.php">View Donors</a></li>
@@ -62,9 +68,39 @@ $username = $_SESSION['loggedIn'];
 					<p>Hello, <?php echo "{$_SESSION['loggedIn']}"; ?>!</p>
 					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
 				</div>
-				<div class="col-md-9">
+				<div class="col-md-4">
+					<div id="addEvent">
+						<h2>Add Event</h2>
+						<form action="addEvent.php" method="post">
+							<div class="form-group">
+								<label for="eventName">Name: </label><input type="text" name="eventName" id="eventName" class="form-control" required>
+								<label for="eventLoc">Location: </label>
+								<select class="form-control" id="eventLoc">
+								<?php
+								while($row = $eventLocResult->fetch_assoc()){
+								    echo "<option value=\"" . $row['location_id'] . "\">" . $row['venue'] . "</option>";
+								}
+								?>
+								</select>
+								<label for="eventCost">Cost: </label><input type="number" min="0" name="eventCost" id="eventCost" class="form-control" required>
+								<label for="eventDate">Date: </label><input type="date" name="eventDate" id="eventDate" class="form-control" required>
+								<label for="eventManager">Manager: </label>
+								<select class="form-control" id="eventManager">
+								<?php
+								while($row2 = $eventManResult->fetch_assoc()){
+								    echo "<option value=\"" . $row2['manager_id'] . "\">" . $row2['fname'] . " " . $row2['lname'] . "</option>";
+								}
+								?>
+								</select>
+							</div>
+							<button type="submit" name="submitEvent" id="submitEvent" class="btn btn-primary">Add Event</button>
+						</form>
+						<div id="responseEvent"></div>
+						<div id="successEvent"></div>
+					</div>
+					<hr>
 					<div id="addLocation">
-						<p>Add Location</p>
+						<h2>Add Location</h2>
 						<form action="addLocation.php" method="post">
 							<div class="form-group">
 								<label for="locName">Venue Name: </label><input type="text" name="locName" id="locName" class="form-control" required>
@@ -77,16 +113,49 @@ $username = $_SESSION['loggedIn'];
 						<div id="responseLoc"></div>
 						<div id="successLoc"></div>
 					</div>
+					<hr>
 					<div id="addDonor">
-						<p>Content</p>
+						<h2>Add Donor</h2>
+						<form action="addDonor.php" method="post">
+							<div class="form-group">
+								<label for="donorFname">First Name: </label><input type="text" name="donorFname" id="donorFname" class="form-control" required>
+								<label for="donorLname">Last Name: </label><input type="text" name="donorLname" id="donorLname" class="form-control" required>
+								<label for="donorPhone">Phone: </label><input type="text" name="donorPhone" id="donorPhone" class="form-control" required>
+								<label for="donorCity">City: </label><input type="text" name="donorCity" id="donorCity" class="form-control" required>
+								<label for="donorState">State: </label><input type="text" name="donorState" id="donorState" class="form-control" required>
+							</div>
+							<button type="submit" name="submitDonor" id="submitDonor" class="btn btn-primary">Add Donor</button>
+						</form>
+						<div id="responseDonor"></div>
+						<div id="successDonor"></div>
 					</div>
+					<hr>
 					<div id="addVolunteer">
-						<p>Content</p>
-					</div>
-					<div id="addLocation">
-						<p>Content</p>
+						<h2>Add Volunteer</h2>
+						<form action="addVolunteer.php" method="post">
+							<div class="form-group">
+								<label for="volFname">First Name: </label><input type="text" name="volFname" id="volFname" class="form-control" required>
+								<label for="volLname">Last Name: </label><input type="text" name="volLname" id="volLname" class="form-control" required>
+								<label for="volManager">Manager: </label>
+								<select class="form-control" id="volManager">
+								<?php
+								while($row3 = $volManResult->fetch_assoc()){
+								    echo "<option value=\"" . $row3['manager_id'] . "\">" . $row3['fname'] . " " . $row3['lname'] . "</option>";
+								}
+								?>
+								</select>
+							</div>
+							<button type="submit" name="submitVol" id="submitVol" class="btn btn-primary">Add Volunteer</button>
+						</form>
+						<div id="responseVol"></div>
+						<div id="successVol"></div>
 					</div>
 				</div>
+				</div>
+				<div class="col-md-1">
+				</div>
+				<div class="col-md-4">
+
 			</div>
 		</section>
 		<footer>

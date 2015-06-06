@@ -8,9 +8,10 @@ require_once('session.php');
 
 $username = $_SESSION['loggedIn'];
 
-$locQuery = "SELECT * FROM Location ORDER BY venue ASC";
-$locResult = $mysqli->query($locQuery);
-//$row = $locResult->fetch_assoc();
+$volQuery = "SELECT Volunteers.volunteer_id, Volunteers.fname, Volunteers.lname, Managers.fname AS manfname, Managers.lname AS manlname FROM Volunteers
+			INNER JOIN Managers ON Volunteers.manager = Managers.manager_id
+			ORDER BY Volunteers.lname ASC";
+$volResult = $mysqli->query($volQuery);
 
 ?>
 
@@ -68,21 +69,17 @@ $locResult = $mysqli->query($locQuery);
 					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
 				</div>
 				<div class="col-md-9">
-					<h2 class="text-center">Locations</h2>
+					<h2 class="text-center">Volunteers</h2>
 					<table class="table table-bordered">
 						<thead>
-							<th>Venue</th>
-							<th>Address</th>
-							<th>City</th>
-							<th>State</th>
+							<th>Name</th>
+							<th>Manager</th>
 						</thead>
 						<tbody>
-							<?php while($row = $locResult->fetch_assoc()) {
+							<?php while($row = $volResult->fetch_assoc()) {
 								echo "<tr>";
-								echo "<td><a href=\"viewLocation.php?id=" . $row['location_id'] . "\">" . $row['venue'] . "</a></td>";
-								echo "<td>" . $row['address'] . "</td>";
-								echo "<td>" . $row['city'] . "</td>";
-								echo "<td>" . $row['state'] . "</td>";
+								echo "<td>" . $row['fname'] . " " . $row['lname'] . "</td>";
+								echo "<td>" . $row['manfname'] . " " . $row['manlname'] . "</td>";
 								echo "</tr>";
 							}
 							?>
