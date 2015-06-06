@@ -23,9 +23,6 @@ if(isset($_GET['logout'])){
 	header("Location: {$redirect}/login.php" , true);
 	die();
 }
-
-$username = $_SESSION['loggedIn'];
-
 ?>
 
 <!doctype html>
@@ -70,11 +67,28 @@ $username = $_SESSION['loggedIn'];
 		<section>
 			<div class="container">
 				<div class="col-md-3">
-					<p>Hello, <?php echo $username; ?>!</p>
+					<p>Hello, <?php echo "{$_SESSION['loggedIn']}"; ?>!</p>
 					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
 				</div>
 				<div class="col-md-9">
-					<p>Content</p>
+					<div id="addEvent">
+						<p>Add Event</p>
+						<form action="add.php" method="post">
+							<div class="form-group">
+								<label for="eventName">Event Name: </label><input type="text" name="eventName" id="eventName" class="form-control" required>
+							</div>
+							<button type="submit" name="add" id="add" class="btn btn-primary">Add Event</button>
+						</form>
+					</div>
+					<div id="addDonor">
+						<p>Content</p>
+					</div>
+					<div id="addVolunteer">
+						<p>Content</p>
+					</div>
+					<div id="addLocation">
+						<p>Content</p>
+					</div>
 				</div>
 			</div>
 		</section>

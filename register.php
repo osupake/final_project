@@ -10,6 +10,20 @@ if(isset($_POST['submit'])){
 	$password1 = $_POST['password1'];
 	$password2 = $_POST['password2'];
 
+	//Check for duplicate username
+	$checkUsername = $mysqli->prepare("SELECT * FROM users WHERE username=?");
+	$checkUsername->bind_param("s", $username);
+	$checkUsername->execute();
+	$checkUsername->store_result();
+	$rowsUsername = $checkUsername->num_rows;
+
+	if($rowsUsername > 0){
+		//Matching username found
+		echo "Username taken. Please try again.";
+		exit();
+	}
+	$checkUsername->close();
+
 	//Check if passwords match
 	if($password1 == $password2) {
 		//md5 hash
@@ -55,10 +69,10 @@ if(isset($_POST['submit'])){
 						<label for="username">Username: </label><input type="text" name="username" class="form-control" required>
 					</div>
 					<div class="form-group">
-						<label for="password1">Password: </label><input type="password" name="password1" class="form-control" required><br>
-						<label for="password2">Confirm Password: </label><input type="password" name="password2" class="form-control" required>
+						<label for="password1">Password: </label><input type="password" name="password1" class="form-control" required minlength=6><br>
+						<label for="password2">Confirm Password: </label><input type="password" name="password2" class="form-control" required minlength=6>
 					</div>
-					<input type="submit" name="submit" class="btn btn-primary" value="Register">
+					<button type="submit" name="submit" class="btn btn-primary">Register</button>
 				</form>
 			</div>
 			<div class="col-md-4">
