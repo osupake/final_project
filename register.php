@@ -1,55 +1,3 @@
-<?php
-session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
-include 'storedInfo.php';
-include 'db.php';
-
-if(isset($_POST['submit'])){
-	$username = $_POST['username'];
-	$password1 = $_POST['password1'];
-	$password2 = $_POST['password2'];
-
-	//Check for duplicate username
-	$checkUsername = $mysqli->prepare("SELECT * FROM users WHERE username=?");
-	$checkUsername->bind_param("s", $username);
-	$checkUsername->execute();
-	$checkUsername->store_result();
-	$rowsUsername = $checkUsername->num_rows;
-
-	if($rowsUsername > 0){
-		//Matching username found
-		echo "Username taken. Please try again.";
-		exit();
-	}
-	$checkUsername->close();
-
-	//Check if passwords match
-	if($password1 == $password2) {
-		//md5 hash
-		$password1 = md5($password1);
-
-		//Prepared statement to add username and password into database
-		$add = $mysqli->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-
-		$add->bind_param("ss", $username, $password1);
-		$add->execute();
-		$add->close();
-
-		//Redirect to login page
-		$filePath = explode('/', $_SERVER['PHP_SELF'], -1);
-		$filePath = implode('/', $filePath);
-		$redirect = "http://" . $_SERVER['HTTP_HOST'] . $filePath;
-		header("Location: {$redirect}/login.php" , true);
-		die();
-
-	} else {
-		echo "Passwords do not match. Please try again.";
-	}
-}
-
-?>
-
 <!doctype html>
 <html>
 <head>
@@ -64,15 +12,17 @@ if(isset($_POST['submit'])){
 			<div class="col-md-4">
 			</div>
 			<div class="col-md-4">
-				<form action="register.php" method="post">
+				<form action="validateReg.php" method="post">
 					<div class="form-group">
-						<label for="username">Username: </label><input type="text" name="username" class="form-control" required>
+						<label for="username">Username: </label><input type="text" name="username" id="username" class="form-control" required>
 					</div>
 					<div class="form-group">
-						<label for="password1">Password: </label><input type="password" name="password1" class="form-control" required minlength=6><br>
-						<label for="password2">Confirm Password: </label><input type="password" name="password2" class="form-control" required minlength=6>
+						<label for="password1">Password: </label><input type="password" name="password1" id="password1" class="form-control" required minlength=6><br>
+						<label for="password2">Confirm Password: </label><input type="password" name="password2" id="password2" class="form-control" required minlength=6>
 					</div>
-					<button type="submit" name="submit" class="btn btn-primary">Register</button>
+					<button type="submit" name="submit" id="submit" class="btn btn-primary">Register</button>
+					<p><div id="response"></div></p>
+					<p><div id="success"></div></p>
 				</form>
 			</div>
 			<div class="col-md-4">
@@ -80,5 +30,6 @@ if(isset($_POST['submit'])){
 		</div>	
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+		<script src="register_script.js" type="text/javascript"></script>
 	</body>
 </html>

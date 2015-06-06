@@ -4,3 +4,10 @@
 #response {
 	color: red;
 }
+
+/********************
+	register.php
+********************/
+#success {
+	color: green;
+}
