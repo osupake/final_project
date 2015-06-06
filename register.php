@@ -15,6 +15,8 @@
 				<form action="validateReg.php" method="post">
 					<div class="form-group">
 						<label for="username">Username: </label><input type="text" name="username" id="username" class="form-control" required>
+						<label for="firstname">First Name: </label><input type="text" name="firstname" id="firstname" class="form-control" required>
+						<label for="lastname">Last Name: </label><input type="text" name="lastname" id="lastname" class="form-control" required>
 					</div>
 					<div class="form-group">
 						<label for="password1">Password: </label><input type="password" name="password1" id="password1" class="form-control" required minlength=6><br>
@@ -30,6 +32,6 @@
 		</div>	
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-		<script src="register_script.js" type="text/javascript"></script>
+		<script src="js/register_script.js" type="text/javascript"></script>
 	</body>
 </html>

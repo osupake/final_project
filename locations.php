@@ -8,6 +8,10 @@ require_once('session.php');
 
 $username = $_SESSION['loggedIn'];
 
+$locQuery = "SELECT * FROM Location ORDER BY venue ASC";
+$locResult = $mysqli->query($locQuery);
+//$row = $locResult->fetch_assoc();
+
 ?>
 
 <!doctype html>
@@ -59,33 +63,30 @@ $username = $_SESSION['loggedIn'];
 		<section>
 			<div class="container">
 				<div class="col-md-3">
-					<p>Hello, <?php echo "{$_SESSION['loggedIn']}"; ?>!</p>
+					<p>Hello, <?php echo $username; ?>!</p>
+					<p>Update your profile</p>
 					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
 				</div>
 				<div class="col-md-9">
-					<div id="addLocation">
-						<p>Add Location</p>
-						<form action="addLocation.php" method="post">
-							<div class="form-group">
-								<label for="locName">Venue Name: </label><input type="text" name="locName" id="locName" class="form-control" required>
-								<label for="locAdd">Street Address: </label><input type="text" name="locAdd" id="locAdd" class="form-control" required>
-								<label for="locCity">City: </label><input type="text" name="locCity" id="locCity" class="form-control" required>
-								<label for="locState">State: </label><input type="text" name="locState" id="locState" class="form-control" required>
-							</div>
-							<button type="submit" name="submitLoc" id="submitLoc" class="btn btn-primary">Add Location</button>
-						</form>
-						<div id="responseLoc"></div>
-						<div id="successLoc"></div>
-					</div>
-					<div id="addDonor">
-						<p>Content</p>
-					</div>
-					<div id="addVolunteer">
-						<p>Content</p>
-					</div>
-					<div id="addLocation">
-						<p>Content</p>
-					</div>
+					<table class="table table-bordered">
+						<thead>
+							<th>Venue</th>
+							<th>Address</th>
+							<th>City</th>
+							<th>State</th>
+						</thead>
+						<tbody>
+							<?php while($row = $locResult->fetch_assoc()) {
+								echo "<tr>";
+								echo "<td><a href=\"viewLocation.php?id=" . $row['location_id'] . "\">" . $row['venue'] . "</a></td>";
+								echo "<td>" . $row['address'] . "</td>";
+								echo "<td>" . $row['city'] . "</td>";
+								echo "<td>" . $row['state'] . "</td>";
+								echo "</tr>";
+							}
+							?>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</section>
@@ -93,6 +94,5 @@ $username = $_SESSION['loggedIn'];
 		</footer>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-	    <script src="js/add.js" type="text/javascript"></script>
 	</body>
 </html>

@@ -2,17 +2,21 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
-include 'storedInfo.php';
-include 'db.php';
+require_once('storedInfo.php');
+require_once('db.php');
 
 $is_ajax = $_REQUEST['is_ajax'];
 if(isset($is_ajax) && $is_ajax) {
 	$username = $_REQUEST['username'];
 	$password1 = $_REQUEST['password1'];
 	$password2 = $_REQUEST['password2'];
+	$firstname = $_REQUEST['firstname'];
+	$lastname = $_REQUEST['lastname'];
 
 	//Check for duplicate username
-	$checkUsername = $mysqli->prepare("SELECT * FROM users WHERE username=?");
+	if (!($checkUsername = $mysqli->prepare("SELECT * FROM Managers WHERE username=?"))) {
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+	}
 	$checkUsername->bind_param("s", $username);
 	$checkUsername->execute();
 	$checkUsername->store_result();
@@ -27,8 +31,10 @@ if(isset($is_ajax) && $is_ajax) {
 		$password1 = md5($password1);
 
 		//Prepared statement to add username and password into database
-		$add = $mysqli->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-		$add->bind_param("ss", $username, $password1);
+		if (!($add = $mysqli->prepare("INSERT INTO Managers (lname, fname, username, password) VALUES (?, ?, ?, ?)"))) {
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+		}
+		$add->bind_param("ssss", $lastname, $firstname, $username, $password1);
 		$add->execute();
 		$add->close();
 		echo "registered";

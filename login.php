@@ -22,13 +22,13 @@
 					<button type="submit" name="submit" id="submit" class="btn btn-primary">Login</button>
 				</form>
 				<p><div id="response"></div></p>
-				<p><a href="register.php">Click here to register</a></p>
+				<p>Not a member? <a href="register.php">Click here to register</a></p>
 			</div>
 			<div class="col-md-4">
 			</div>
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js" type="text/javascript"></script>
-		<script src="login_script.js" type="text/javascript"></script>
+		<script src="js/login_script.js" type="text/javascript"></script>
 	</body>
 </html>

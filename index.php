@@ -2,27 +2,9 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
-include 'storedInfo.php';
-include 'db.php';
-
-//Check if logged in
-if (!isset($_SESSION['loggedIn'])){
-	$filePath = explode('/', $_SERVER['PHP_SELF'], -1);
-	$filePath = implode('/', $filePath);
-	$redirect = "http://" . $_SERVER['HTTP_HOST'] . $filePath;
-	header("Location: {$redirect}/login.php" , true);
-}
-
-//Logout user
-if(isset($_GET['logout'])){
-	$_SESSION = array();
-	session_destroy();
-	$filePath = explode('/', $_SERVER['PHP_SELF'], -1);
-	$filePath = implode('/', $filePath);
-	$redirect = "http://" . $_SERVER['HTTP_HOST'] . $filePath;
-	header("Location: {$redirect}/login.php" , true);
-	die();
-}
+require_once('storedInfo.php');
+require_once('db.php');
+require_once('session.php');
 
 $username = $_SESSION['loggedIn'];
 
@@ -40,30 +22,37 @@ $username = $_SESSION['loggedIn'];
 	<body>
 		<header>
 			<nav class="navbar navbar-default">
-				<div class="container">
-					<a class="navbar-brand" href="#">FreeNP</a>
-					<ul class="nav navbar-nav navbar-right">
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Add <span class="caret"></span></a>
-							<ul class="dropdown-menu" role="menu">
-							    <li><a href="#">Add Event</a></li>
-								<li><a href="#">Add Donor</a></li>
-								<li><a href="#">Add Volunteer</a></li>
-								<li><a href="#">Add Location</a></li>
-					       	</ul>
-						</li>
-						<li class="dropdown">
-				       	<a href="#" class="dropdown-toggle" data-toggle="dropdown">View <span class="caret"></span></a>
-					       	<ul class="dropdown-menu" role="menu">
-					       		<li><a href="#">Your Events</a></li>
-					       		<li class="divider"></li>
-							    <li><a href="#">View All Events</a></li>
-								<li><a href="#">View Donors</a></li>
-								<li><a href="#">View Volunteers</a></li>
-								<li><a href="#">View Locations</a></li>
-					       	</ul>
-						</li>
-					</ul>
+				<div class="container-fluid">
+					<a class="navbar-brand" href="index.php">FreeNP</a>
+					<button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<div class="collapse navbar-collapse navHeaderCollapse">
+						<ul class="nav navbar-nav navbar-right">
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Add <span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu">
+								    <li><a href="addEvent.php">Add Event</a></li>
+									<li><a href="addDonor.php">Add Donor</a></li>
+									<li><a href="addVolunteer.php">Add Volunteer</a></li>
+									<li><a href="add.php#addLocation">Add Location</a></li>
+						       	</ul>
+							</li>
+							<li class="dropdown">
+					       	<a href="#" class="dropdown-toggle" data-toggle="dropdown">View <span class="caret"></span></a>
+						       	<ul class="dropdown-menu" role="menu">
+						       		<li><a href="myevents.php">Your Events</a></li>
+						       		<li class="divider"></li>
+								    <li><a href="events.php">View All Events</a></li>
+									<li><a href="donors.php">View Donors</a></li>
+									<li><a href="volunteers.php">View Volunteers</a></li>
+									<li><a href="locations.php">View Locations</a></li>
+						       	</ul>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</nav>
 		</header>
@@ -71,6 +60,7 @@ $username = $_SESSION['loggedIn'];
 			<div class="container">
 				<div class="col-md-3">
 					<p>Hello, <?php echo $username; ?>!</p>
+					<p>Update your profile</p>
 					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
 				</div>
 				<div class="col-md-9">

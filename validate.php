@@ -2,8 +2,8 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
-include 'storedInfo.php';
-include 'db.php';
+require_once('storedInfo.php');
+require_once('db.php');
 
 $is_ajax = $_REQUEST['is_ajax'];
 if(isset($is_ajax) && $is_ajax) {
@@ -11,7 +11,9 @@ if(isset($is_ajax) && $is_ajax) {
 	$password = $_REQUEST['password'];
 	$password = md5($password);
 
-	$check = $mysqli->prepare("SELECT * FROM users WHERE username=? AND password=?");
+	if (!($check = $mysqli->prepare("SELECT * FROM Managers WHERE username=? AND password=?"))) {
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+	}
 	$check->bind_param("ss", $username, $password);
 	$check->execute();
 	$check->store_result();

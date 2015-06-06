@@ -8,6 +8,31 @@ require_once('session.php');
 
 $username = $_SESSION['loggedIn'];
 
+$location_id = $_GET['id'];
+
+//Prepared statement to get details for selected location
+if (!($viewLoc = $mysqli->prepare("SELECT * FROM Location WHERE location_id=?"))) {
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
+$viewLoc->bind_param("i", $location_id);
+$viewLoc->execute();
+$result = $viewLoc->get_result();
+$viewLoc->close();
+
+//Delete location
+if(isset($_GET['delete'])){
+	if (!($deleteLoc = $mysqli->prepare("DELETE FROM Location WHERE location_id=? LIMIT 1"))) {
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+	}
+	$deleteLoc->bind_param("i", $location_id);
+	$deleteLoc->execute();
+	$filePath = explode('/', $_SERVER['PHP_SELF'], -1);
+	$filePath = implode('/', $filePath);
+	$redirect = "http://" . $_SERVER['HTTP_HOST'] . $filePath;
+	header("Location: {$redirect}/locations.php" , true);
+	die();
+}
+
 ?>
 
 <!doctype html>
@@ -59,33 +84,23 @@ $username = $_SESSION['loggedIn'];
 		<section>
 			<div class="container">
 				<div class="col-md-3">
-					<p>Hello, <?php echo "{$_SESSION['loggedIn']}"; ?>!</p>
+					<p>Hello, <?php echo $username; ?>!</p>
+					<p>Update your profile</p>
 					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
 				</div>
 				<div class="col-md-9">
-					<div id="addLocation">
-						<p>Add Location</p>
-						<form action="addLocation.php" method="post">
-							<div class="form-group">
-								<label for="locName">Venue Name: </label><input type="text" name="locName" id="locName" class="form-control" required>
-								<label for="locAdd">Street Address: </label><input type="text" name="locAdd" id="locAdd" class="form-control" required>
-								<label for="locCity">City: </label><input type="text" name="locCity" id="locCity" class="form-control" required>
-								<label for="locState">State: </label><input type="text" name="locState" id="locState" class="form-control" required>
-							</div>
-							<button type="submit" name="submitLoc" id="submitLoc" class="btn btn-primary">Add Location</button>
-						</form>
-						<div id="responseLoc"></div>
-						<div id="successLoc"></div>
-					</div>
-					<div id="addDonor">
-						<p>Content</p>
-					</div>
-					<div id="addVolunteer">
-						<p>Content</p>
-					</div>
-					<div id="addLocation">
-						<p>Content</p>
-					</div>
+					<table class="table table-bordered">
+						<tbody>
+							<?php while($row = $result->fetch_assoc()) {
+								echo "<tr><td>Venue</td><td>" . $row['venue'] . "</td></tr>";
+								echo "<tr><td>Address</td><td>" . $row['address'] . "</td></tr>";
+								echo "<tr><td>City</td><td>" . $row['city'] . "</td></tr>";
+								echo "<tr><td>State</td><td>" . $row['state'] . "</td></tr>";
+							}
+							?>
+						</tbody>
+					</table>
+					<a href="<?php echo "viewLocation.php?id=$location_id&delete=true" ?>"><button class="btn btn-danger">Delete Entry</button></a>
 				</div>
 			</div>
 		</section>
@@ -93,6 +108,5 @@ $username = $_SESSION['loggedIn'];
 		</footer>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-	    <script src="js/add.js" type="text/javascript"></script>
 	</body>
 </html>
