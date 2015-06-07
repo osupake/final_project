@@ -19,6 +19,17 @@ $viewLoc->execute();
 $result = $viewLoc->get_result();
 $viewLoc->close();
 
+//Prepared statement to get previous events at this location
+if (!($events = $mysqli->prepare("SELECT Events.name, Events.event_date, Events.event_id FROM Events
+									INNER JOIN Location ON Events.location = Location.location_id
+									WHERE Location.location_id = ?"))) {
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
+$events->bind_param("i", $location_id);
+$events->execute();
+$result2 = $events->get_result();
+$events->close();
+
 //Delete location
 if(isset($_GET['delete'])){
 	if (!($checkLoc = $mysqli->prepare("SELECT * FROM Events WHERE location=?"))) {
@@ -133,8 +144,27 @@ if(isset($_GET['delete'])){
 							?>
 						</tbody>
 					</table>
-					<a href="<?php echo "viewLocation.php?id=$location_id&delete=true" ?>"><button class="btn btn-danger">Delete Entry</button></a>
-					<div id="delete"></div>
+					<div class="col-md-8">
+						<h4 class="text-center">Previous Events Held Here</h4>
+						<table class="table table-bordered">
+							<thead>
+								<th>Event</th>
+								<th>Date</th>
+							</thead>
+							<tbody>
+								<?php while($row2 = $result2->fetch_assoc()) {
+									echo "<td><a href=\"viewEvent.php?id=" . $row2['event_id'] . "\">" . $row2['name'] . "</a></td>";
+									echo "<td>" . $row2['event_date'] . "</td></tr>";
+								}
+								?>
+							</tbody>
+					</table>
+					</div>
+					<div class="col-md-4">
+						<div class="text-center">
+							<a href="<?php echo "viewLocation.php?id=$location_id&delete=true" ?>"><button class="btn btn-danger">Delete Entry</button></a>
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>

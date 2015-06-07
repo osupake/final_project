@@ -160,18 +160,18 @@ $viewTotal->close();
 					</table>
 					</div>
 					<div class="col-md-4">
-						<h4 class="text-center">Total Amount Raised:</h4>
-						<ul>
+						<h4 class="text-center">Total Amount Raised</h4>
+						<ul class="list-group">
 							<?php while($row4 = $result4->fetch_assoc()) {
-								echo "<li>" . $row4['total'] . "</li>";
+								echo "<li class=\"list-group-item\">" . $row4['total'] . "</li>";
 							}
 							?>
 						</ul>
 						<br>
 						<h4 class="text-center">Volunteers</h4>
-						<ul>
+						<ul class="list-group">
 							<?php while($row2 = $result2->fetch_assoc()) {
-								echo "<li>" . $row2['fname'] . " " . $row2['lname'] . "</li>";
+								echo "<li class=\"list-group-item\">" . $row2['fname'] . " " . $row2['lname'] . "</li>";
 							}
 							?>
 						</ul>

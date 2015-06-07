@@ -147,10 +147,10 @@ $viewTotal->close();
 					</table>
 					</div>
 					<div class="col-md-4">
-						<h4 class="text-center">Total Amount Donated:</h4>
-						<ul>
+						<h4 class="text-center">Total Amount Donated</h4>
+						<ul class="list-group">
 							<?php while($row3 = $result3->fetch_assoc()) {
-								echo "<li>" . $row3['total'] . "</li>";
+								echo "<li class=\"list-group-item\">" . $row3['total'] . "</li>";
 							}
 							?>
 						</ul>
