@@ -77,6 +77,8 @@ if(isset($_GET['delete'])){
 								    <li><a href="add.php#addLocation">Add Location</a></li>
 									<li><a href="add.php#addDonor">Add Donor</a></li>
 									<li><a href="add.php#addVolunteer">Add Volunteer</a></li>
+									<li><a href="add.php#enterDonation">Enter Donation</a></li>
+									<li><a href="add.php#assignVolunteer">Assign Volunteer</a></li>
 						       	</ul>
 							</li>
 							<li class="dropdown">
@@ -98,18 +100,35 @@ if(isset($_GET['delete'])){
 		<section>
 			<div class="container">
 				<div class="col-md-3">
-					<p>Hello, <?php echo $username; ?>!</p>
-					<p>Update your profile</p>
-					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
+					<div class="text-center">
+						<p>Hello, <?php echo $username; ?>!</p>
+					</div>
+					<div class="list-group">
+						<a href="add.php#addEvent" class="list-group-item list-group-item-success">Add Event</a>
+					    <a href="add.php#addLocation" class="list-group-item">Add Location</a>
+						<a href="add.php#addDonor" class="list-group-item list-group-item-success">Add Donor</a>
+						<a href="add.php#addVolunteer" class="list-group-item">Add Volunteer</a>
+						<a href="add.php#enterDonation" class="list-group-item list-group-item-success">Enter Donation</a>
+						<a href="add.php#assignVolunteer" class="list-group-item">Assign Volunteer</a>
+					</div>
+					<div class="list-group">
+						<a href="events.php" class="list-group-item list-group-item-success">View All Events</a>
+						<a href="donors.php" class="list-group-item">View Donors</a>
+						<a href="volunteers.php" class="list-group-item list-group-item-success">View Volunteers</a>
+						<a href="locations.php" class="list-group-item">View Locations</a>
+					</div>
+					<div class="text-center">
+						<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
+					</div>
 				</div>
 				<div class="col-md-9">
 					<table class="table table-bordered">
 						<tbody>
 							<?php while($row = $result->fetch_assoc()) {
-								echo "<tr><td>Venue</td><td>" . $row['venue'] . "</td></tr>";
-								echo "<tr><td>Address</td><td>" . $row['address'] . "</td></tr>";
-								echo "<tr><td>City</td><td>" . $row['city'] . "</td></tr>";
-								echo "<tr><td>State</td><td>" . $row['state'] . "</td></tr>";
+								echo "<tr><th>Venue</th><td>" . $row['venue'] . "</td></tr>";
+								echo "<tr><th>Address</th><td>" . $row['address'] . "</td></tr>";
+								echo "<tr><th>City</th><td>" . $row['city'] . "</td></tr>";
+								echo "<tr><th>State</th><td>" . $row['state'] . "</td></tr>";
 							}
 							?>
 						</tbody>

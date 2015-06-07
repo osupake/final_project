@@ -21,6 +21,39 @@ $viewEvent->execute();
 $result = $viewEvent->get_result();
 $viewEvent->close();
 
+//Prepared statement to get volunteers for selected event
+if (!($viewVols = $mysqli->prepare("SELECT Volunteers.fname, Volunteers.lname FROM Volunteers
+									INNER JOIN VolunteerEvents ON Volunteers.volunteer_id = VolunteerEvents.volunteer_id
+									INNER JOIN Events ON Events.event_id = VolunteerEvents.event_id WHERE Events.event_id = ?
+									ORDER BY Volunteers.lname ASC"))){
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
+$viewVols->bind_param("i", $event_id);
+$viewVols->execute();
+$result2 = $viewVols->get_result();
+$viewVols->close();
+
+//Prepared statement to view donations for selected event
+if (!($viewDons = $mysqli->prepare("SELECT DonorEvents.amount_donated, DonorEvents.donation_date, Donors.fname, Donors.lname, Donors.donor_id FROM DonorEvents
+									INNER JOIN Donors ON DonorEvents.donor_id = Donors.donor_id
+									INNER JOIN Events ON DonorEvents.event_id = Events.event_id
+									WHERE Events.event_id = ? ORDER BY DonorEvents.amount_donated DESC"))){
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
+$viewDons->bind_param("i", $event_id);
+$viewDons->execute();
+$result3 = $viewDons->get_result();
+$viewDons->close();
+
+//Prepared statement to view total donation for selected event
+if (!($viewTotal = $mysqli->prepare("SELECT SUM( amount_donated ) AS total FROM DonorEvents WHERE event_id = ?"))){
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
+$viewTotal->bind_param("i", $event_id);
+$viewTotal->execute();
+$result4 = $viewTotal->get_result();
+$viewTotal->close();
+
 ?>
 
 <!doctype html>
@@ -51,6 +84,8 @@ $viewEvent->close();
 								    <li><a href="add.php#addLocation">Add Location</a></li>
 									<li><a href="add.php#addDonor">Add Donor</a></li>
 									<li><a href="add.php#addVolunteer">Add Volunteer</a></li>
+									<li><a href="add.php#enterDonation">Enter Donation</a></li>
+									<li><a href="add.php#assignVolunteer">Assign Volunteer</a></li>
 						       	</ul>
 							</li>
 							<li class="dropdown">
@@ -72,23 +107,75 @@ $viewEvent->close();
 		<section>
 			<div class="container">
 				<div class="col-md-3">
-					<p>Hello, <?php echo $username; ?>!</p>
-					<p>Update your profile</p>
-					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
+					<div class="text-center">
+						<p>Hello, <?php echo $username; ?>!</p>
+					</div>
+					<div class="list-group">
+						<a href="add.php#addEvent" class="list-group-item list-group-item-success">Add Event</a>
+					    <a href="add.php#addLocation" class="list-group-item">Add Location</a>
+						<a href="add.php#addDonor" class="list-group-item list-group-item-success">Add Donor</a>
+						<a href="add.php#addVolunteer" class="list-group-item">Add Volunteer</a>
+						<a href="add.php#enterDonation" class="list-group-item list-group-item-success">Enter Donation</a>
+						<a href="add.php#assignVolunteer" class="list-group-item">Assign Volunteer</a>
+					</div>
+					<div class="list-group">
+						<a href="events.php" class="list-group-item list-group-item-success">View All Events</a>
+						<a href="donors.php" class="list-group-item">View Donors</a>
+						<a href="volunteers.php" class="list-group-item list-group-item-success">View Volunteers</a>
+						<a href="locations.php" class="list-group-item">View Locations</a>
+					</div>
+					<div class="text-center">
+						<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
+					</div>
 				</div>
 				<div class="col-md-9">
 					<table class="table table-bordered">
 						<tbody>
 							<?php while($row = $result->fetch_assoc()) {
-								echo "<tr><td>Event</td><td>" . $row['name'] . "</td></tr>";
-								echo "<tr><td>Cost</td><td>" . $row['cost'] . "</td></tr>";
-								echo "<tr><td>Date</td><td>" . $row['event_date'] . "</td></tr>";
-								echo "<tr><td>Venue</td><td>" . $row['venue'] . "</td></tr>";
-								echo "<tr><td>Manager</td><td>" . $row['fname'] . " " . $row['lname'] . "</td></tr>";
+								echo "<tr><th>Event</th><td>" . $row['name'] . "</td></tr>";
+								echo "<tr><th>Cost</th><td>" . $row['cost'] . "</td></tr>";
+								echo "<tr><th>Date</th><td>" . $row['event_date'] . "</td></tr>";
+								echo "<tr><th>Venue</th><td><a href=\"viewLocation.php?id=" . $row['location_id'] . "\">" . $row['venue'] . "</a></td></tr>";
+								echo "<tr><th>Manager</th><td>" . $row['fname'] . " " . $row['lname'] . "</td></tr>";
 							}
 							?>
 						</tbody>
 					</table>
+					<div class="col-md-8">
+						<h4 class="text-center">Donors</h4>
+						<table class="table table-bordered">
+							<thead>
+								<th>Name</th>
+								<th>Donation Date</th>
+								<th>Amount</th>
+							</thead>
+							<tbody>
+								<?php while($row3 = $result3->fetch_assoc()) {
+									echo "<td><a href=\"viewDonor.php?id=" . $row3['donor_id'] . "\">" . $row3['fname'] . " " . $row3['lname'] . "</a></td>";
+									echo "<td>" . $row3['donation_date'] . "</td>";
+									echo "<td>" . $row3['amount_donated'] . "</td></tr>";
+								}
+								?>
+							</tbody>
+					</table>
+					</div>
+					<div class="col-md-4">
+						<h4 class="text-center">Total Amount Raised:</h4>
+						<ul>
+							<?php while($row4 = $result4->fetch_assoc()) {
+								echo "<li>" . $row4['total'] . "</li>";
+							}
+							?>
+						</ul>
+						<br>
+						<h4 class="text-center">Volunteers</h4>
+						<ul>
+							<?php while($row2 = $result2->fetch_assoc()) {
+								echo "<li>" . $row2['fname'] . " " . $row2['lname'] . "</li>";
+							}
+							?>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</section>

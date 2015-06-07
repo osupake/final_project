@@ -1,8 +1,8 @@
-#response, #responseLoc, #responseEvent, #responseVol, #responseDonor {
+#response, #responseLoc, #responseEvent, #responseVol, #responseDonor, #responseAssign, #responseDonation {
 	color: red;
 }
 
-#success, #successLoc, #successEvent, #successVol, #successDonor {
+#success, #successLoc, #successEvent, #successVol, #successDonor, #successAssign, #successDonation {
 	color: green;
 }
 

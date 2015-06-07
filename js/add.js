@@ -27,11 +27,11 @@ $(document).ready(function () {
 				success: function(response) {
 					if(response == "added") {
 						//entry added
-						$("#successLoc").html("Location successfully added.").delay(3000).fadeOut(400);
+						$("#successLoc").html("Location successfully added.");
 						$("#responseLoc").html("");
 					} else if(response == "duplicate") {
 						//duplicate entry
-						$("#responseLoc").html("That venue already exists.").delay(3000).fadeOut(400);
+						$("#responseLoc").html("That venue already exists.");
 						$("#successLoc").html("");
 					}
 				}
@@ -68,11 +68,11 @@ $(document).ready(function () {
 				success: function(response) {
 					if(response == "added") {
 						//entry added
-						$("#successEvent").html("Event successfully added.").delay(3000).fadeOut(400);
+						$("#successEvent").html("Event successfully added.");
 						$("#responseEvent").html("");
 					} else if(response == "duplicate") {
 						//duplicate entry
-						$("#responseEvent").html("That event already exists.").delay(3000).fadeOut(400);
+						$("#responseEvent").html("That event already exists.");
 						$("#successEvent").html("");
 					}
 				}
@@ -105,11 +105,11 @@ $(document).ready(function () {
 				success: function(response) {
 					if(response == "added") {
 						//entry added
-						$("#successVol").html("Volunteer successfully added.").delay(3000).fadeOut(400);
+						$("#successVol").html("Volunteer successfully added.");
 						$("#responseVol").html("");
 					} else if(response == "duplicate") {
 						//duplicate entry
-						$("#responseVol").html("That volunteer already exists.").delay(3000).fadeOut(400);
+						$("#responseVol").html("That volunteer already exists.");
 						$("#successVol").html("");
 					}
 				}
@@ -152,16 +152,83 @@ $(document).ready(function () {
 				success: function(response) {
 					if(response == "added") {
 						//entry added
-						$("#successDonor").html("Donor successfully added.").delay(3000).fadeOut(400);
+						$("#successDonor").html("Donor successfully added.");
 						$("#responseDonor").html("");
 					} else if(response == "duplicate") {
 						//duplicate entry
-						$("#responseDonor").html("That donor already exists.").delay(3000).fadeOut(400);
+						$("#responseDonor").html("That donor already exists.");
 						$("#successDonor").html("");
 					}
 				}
 			});
 		}
+
+		return false;
+	});
+
+	//enter donation
+	$("#submitDon").click(function(){
+		//Check for blank entries
+		if($("#donationAmount").val() == "") {
+			$("#responseDon").html("Enter a donation amount.");
+		} else { //All info is entered
+			var formData = {
+				donationEvent: $("#donationEvent").val(),
+				eventDonor: $("#eventDonor").val(),
+				donationAmount: $("#donationAmount").val(),
+				donationDate: $("#donationDate").val(),
+				is_ajax: 1
+			};
+
+			//post to enterDonation.php
+			$.ajax({
+				type: "POST",
+				url: "enterDonation.php",
+				data: formData,
+				success: function(response) {
+					if(response == "added") {
+						//entry added
+						$("#successDonation").html("Donation successfully added.");
+						$("#responseDonation").html("");
+					} else if(response == "duplicate") {
+						//duplicate entry
+						$("#responseDonation").html("That donation already exists.");
+						$("#successDonation").html("");
+					}
+				}
+			});
+		}
+
+		return false;
+	});
+
+
+	//assign volunteer
+	$("#assignVol").click(function(){
+		//Check for blank entries
+		var formData = {
+			eventAssign: $("#eventAssign").val(),
+			volunteers: $("#volunteers").val(),
+			is_ajax: 1
+		}
+
+		//post to assignVol.php
+		$.ajax({
+			type: "POST",
+			url: "assignVol.php",
+			data: formData,
+			success: function(response) {
+				if(response == "added") {
+					//entry added
+					$("#successAssign").html("Volunteer successfully assigned.");
+					$("#responseAssign").html("");
+				} else if(response == "duplicate") {
+					//duplicate entry
+					$("#responseAssign").html("Volunteer already assigned to this event.");
+					$("#successAssign").html("");
+				}
+			}
+		});
 
 		return false;
 	});

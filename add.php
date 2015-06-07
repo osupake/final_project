@@ -14,6 +14,17 @@ $eventLocResult = $mysqli->query($eventLocation);
 $eventManager = "SELECT fname, lname, manager_id FROM Managers ORDER BY lname ASC";
 $eventManResult = $mysqli->query($eventManager);
 $volManResult = $mysqli->query($eventManager);
+
+$allEvents = "SELECT name, event_id FROM Events ORDER BY name ASC";
+$allEventsResult = $mysqli->query($allEvents);
+$allEventsResult2 = $mysqli->query($allEvents);
+
+$allDonors = "SELECT fname, lname, donor_id FROM Donors ORDER BY lname ASC";
+$allDonorsResult = $mysqli->query($allDonors);
+
+$allVols = "SELECT fname, lname, volunteer_id FROM Volunteers ORDER BY lname ASC";
+$allVolsResult = $mysqli->query($allVols);
+
 ?>
 
 <!doctype html>
@@ -44,6 +55,8 @@ $volManResult = $mysqli->query($eventManager);
 								    <li><a href="add.php#addLocation">Add Location</a></li>
 									<li><a href="add.php#addDonor">Add Donor</a></li>
 									<li><a href="add.php#addVolunteer">Add Volunteer</a></li>
+									<li><a href="add.php#enterDonation">Enter Donation</a></li>
+									<li><a href="add.php#assignVolunteer">Assign Volunteer</a></li>
 						       	</ul>
 							</li>
 							<li class="dropdown">
@@ -65,8 +78,26 @@ $volManResult = $mysqli->query($eventManager);
 		<section>
 			<div class="container">
 				<div class="col-md-3">
-					<p>Hello, <?php echo "{$_SESSION['loggedIn']}"; ?>!</p>
-					<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
+					<div class="text-center">
+						<p>Hello, <?php echo $username; ?>!</p>
+					</div>
+					<div class="list-group">
+						<a href="add.php#addEvent" class="list-group-item list-group-item-success">Add Event</a>
+					    <a href="add.php#addLocation" class="list-group-item">Add Location</a>
+						<a href="add.php#addDonor" class="list-group-item list-group-item-success">Add Donor</a>
+						<a href="add.php#addVolunteer" class="list-group-item">Add Volunteer</a>
+						<a href="add.php#enterDonation" class="list-group-item list-group-item-success">Enter Donation</a>
+						<a href="add.php#assignVolunteer" class="list-group-item">Assign Volunteer</a>
+					</div>
+					<div class="list-group">
+						<a href="events.php" class="list-group-item list-group-item-success">View All Events</a>
+						<a href="donors.php" class="list-group-item">View Donors</a>
+						<a href="volunteers.php" class="list-group-item list-group-item-success">View Volunteers</a>
+						<a href="locations.php" class="list-group-item">View Locations</a>
+					</div>
+					<div class="text-center">
+						<p><a href="index.php?logout=true"><button type="button" class="btn btn-danger">Log Out</button></a></p>
+					</div>
 				</div>
 				<div class="col-md-4">
 					<div id="addEvent">
@@ -151,11 +182,65 @@ $volManResult = $mysqli->query($eventManager);
 						<div id="successVol"></div>
 					</div>
 				</div>
-				</div>
 				<div class="col-md-1">
 				</div>
 				<div class="col-md-4">
-
+					<div id="enterDonation">
+						<h2>Enter Donation</h2>
+						<form action="enterDonation.php" method="post">
+							<div class="form-group">
+								<label for="eventDonation">Event: </label>
+								<select class="form-control" id="donationEvent">
+								<?php
+								while($row4 = $allEventsResult->fetch_assoc()){
+								    echo "<option value=\"" . $row4['event_id'] . "\">" . $row4['name'] . "</option>";
+								}
+								?>
+								</select>
+								<label for="eventDonor">Donor: </label>
+								<select class="form-control" id="eventDonor">
+								<?php
+								while($row5 = $allDonorsResult->fetch_assoc()){
+								    echo "<option value=\"" . $row5['donor_id'] . "\">" . $row5['fname'] . " " . $row5['lname'] . "</option>";
+								}
+								?>
+								</select>
+								<label for="donationAmount">Donation Amount: </label><input type="number" min="0" name="donationAmount" id="donationAmount" class="form-control" required>
+								<label for="donationDate">Date: </label><input type="date" name="donationDate" id="donationDate" class="form-control" required>
+							</div>
+							<button type="submit" name="submitDon" id="submitDon" class="btn btn-primary">Enter Donation</button>
+						</form>
+						<div id="responseDonation"></div>
+						<div id="successDonation"></div>
+						<hr>
+					</div>
+					<div id="assignVolunteer">
+						<h2>Assign Volunteer</h2>
+						<form action="assignVol.php" method="post">
+							<div class="form-group">
+								<label for="eventAssign">Event: </label>
+								<select class="form-control" id="eventAssign">
+								<?php
+								while($row6 = $allEventsResult2->fetch_assoc()){
+								    echo "<option value=\"" . $row6['event_id'] . "\">" . $row6['name'] . "</option>";
+								}
+								?>
+								</select>
+								<label for="volunteers">Volunteer: </label>
+								<select class="form-control" id="volunteers">
+								<?php
+								while($row7 = $allVolsResult->fetch_assoc()){
+								    echo "<option value=\"" . $row7['volunteer_id'] . "\">" . $row7['fname'] . " " . $row7['lname'] . "</option>";
+								}
+								?>
+								</select>
+							</div>
+							<button type="submit" name="assignVol" id="assignVol" class="btn btn-primary">Assign Volunteer</button>
+						</form>
+						<div id="responseAssign"></div>
+						<div id="successAssign"></div>
+					</div>
+				</div>
 			</div>
 		</section>
 		<footer>
