@@ -8,7 +8,7 @@ require_once('session.php');
 
 $username = $_SESSION['loggedIn'];
 
-//Prepared statement to get details for selected event
+//Prepared statement to get details for logged in users' events
 if (!($viewEvent = $mysqli->prepare("SELECT Events.event_id, Events.name, Events.cost, Events.event_date, Location.venue, Location.location_id, Managers.username FROM Events
 									INNER JOIN Managers ON Events.manager = Managers.manager_id
 									INNER JOIN Location ON Events.location = Location.location_id WHERE Managers.username=? ORDER BY Events.name ASC"))){
